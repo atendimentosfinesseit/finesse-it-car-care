@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/* ── Paleta da marca Finesse It Car Care ───────────────────────
+   Roxo/violeta profundo com detalhes lilás, títulos creme e o rosa
+   do mascote (onça-pintada) como cor de destaque. */
+@theme inline {
+  --color-purple-950: #2c1660;
+  --color-purple-900: #3a1f83;
+  --color-purple-800: #4a279e;
+  --color-purple-700: #5b34bc; /* primária */
+  --color-purple-600: #6d44cf; /* cards */
+  --color-purple-500: #8155e0;
+  --color-lilac: #c6a6f2;      /* bordas / contornos */
+  --color-lilac-soft: #e6d6fb;
+  --color-cream: #f6ecd3;      /* títulos creme (Prata/Ouro) */
+  --color-ink: #1a0f3d;        /* texto sobre fundo claro */
+  --color-pink: #e96fa8;       /* destaque do mascote */
+  --color-pink-dark: #d24e8e;
+
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-display);
+  /* O utilitário font-mono é reaproveitado como "estilo de número":
+     aplica a Rubik com dígitos tabulares — ver regra .font-mono abaixo. */
+  --font-mono: var(--font-num);
+}
+
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-geist-sans), sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background:
+      radial-gradient(120% 80% at 50% -10%, #6d44cf 0%, transparent 55%),
+      linear-gradient(180deg, #4a279e 0%, #3a1f83 45%, #2c1660 100%);
+    background-attachment: fixed;
+    color: var(--color-cream);
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  [role="button"] {
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  button:not(:disabled):active {
+    transform: translateY(1px);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pink);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+/* ── Animações ────────────────────────────────────────────── */
+@keyframes fi-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: fi-rise 0.5s cubic-bezier(0.22, 0.7, 0.25, 1) both;
+}
+
+.stagger > * {
+  animation: fi-rise 0.5s cubic-bezier(0.22, 0.7, 0.25, 1) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.03s; }
+.stagger > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger > *:nth-child(3) { animation-delay: 0.13s; }
+.stagger > *:nth-child(4) { animation-delay: 0.18s; }
+.stagger > *:nth-child(5) { animation-delay: 0.23s; }
+.stagger > *:nth-child(6) { animation-delay: 0.28s; }
+.stagger > *:nth-child(7) { animation-delay: 0.33s; }
+.stagger > *:nth-child(8) { animation-delay: 0.38s; }
+
+/* Elevação no hover (cards de serviço). */
+.hover-lift {
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.28s ease,
+    border-color 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -18px rgba(20, 8, 60, 0.7);
+  border-color: var(--color-pink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise,
+  .stagger > *,
+  .bar-grow {
+    animation: none;
+  }
+  .hover-lift {
+    transition: none;
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
+}
