@@ -20,7 +20,7 @@ export async function signIn(
 
   if (error) return { error: traduzErro(error.message) };
 
-  redirect("/dashboard");
+  redirect("/inicio");
 }
 
 /** Cadastro aberto: cada negócio cria sua própria conta. */
@@ -46,7 +46,7 @@ export async function signUp(
   if (error) return { error: traduzErro(error.message) };
 
   // Confirmação de email desligada → já vem com sessão → entra direto.
-  if (data.session) redirect("/dashboard");
+  if (data.session) redirect("/inicio");
 
   // Confirmação de email ligada → precisa confirmar antes de entrar.
   return { ok: "Conta criada! Confirme seu email e depois faça login." };
