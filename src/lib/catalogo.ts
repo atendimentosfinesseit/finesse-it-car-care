@@ -190,7 +190,7 @@ export const SERVICOS: Servico[] = [
 ];
 
 /** Número de WhatsApp do negócio (só dígitos, formato internacional). */
-export const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? "";
+export const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP ?? "555198601577";
 
 /** Monta um link wa.me com mensagem pré-preenchida. */
 export function linkWhatsApp(mensagem: string): string {
