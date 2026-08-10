@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ArrowLeft, PackagePlus, AlertTriangle, Trash2 } from "lucide-react";
-import { getOrCreateEmpresa } from "@/lib/empresa";
+import { requireAdmin } from "@/lib/admin";
 import {
   getInsumos,
   getMovimentacoes,
@@ -24,12 +23,11 @@ function dataCurta(iso: string): string {
 }
 
 export default async function EstoquePage() {
-  const empresa = await getOrCreateEmpresa();
-  if (!empresa) redirect("/login");
+  await requireAdmin();
 
   const [insumos, movs] = await Promise.all([
-    getInsumos(empresa.id),
-    getMovimentacoes(empresa.id),
+    getInsumos(),
+    getMovimentacoes(),
   ]);
 
   const valorEmEstoque = insumos.reduce(
@@ -41,16 +39,23 @@ export default async function EstoquePage() {
     <main className="mx-auto w-full max-w-4xl px-5 pb-24 pt-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-sm text-lilac-soft">Painel de gestão</p>
-          <h1 className="font-display text-3xl font-bold text-cream">Estoque</h1>
+          <p className="text-sm text-lilac-soft">Painel admin</p>
+          <h1 className="font-display text-3xl font-bold text-cream">
+            Estoque compartilhado
+          </h1>
         </div>
         <Link
-          href="/dashboard"
+          href="/admin"
           className="inline-flex items-center gap-1.5 rounded-full border border-lilac/50 px-4 py-2 text-sm font-medium text-cream hover:border-pink"
         >
-          <ArrowLeft size={15} /> Voltar
+          <ArrowLeft size={15} /> Painel admin
         </Link>
       </header>
+
+      <p className="mt-2 text-sm text-lilac-soft">
+        Um estoque só, compartilhado por todos os admins — o que um consome baixa
+        pra todos.
+      </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl bg-purple-600/25 p-4">
@@ -93,7 +98,7 @@ export default async function EstoquePage() {
       {/* Lista de insumos */}
       <section className="mt-10">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-lilac">
-          Meus insumos
+          Insumos
         </h2>
         {insumos.length === 0 ? (
           <p className="text-lilac-soft">Nenhum insumo cadastrado ainda.</p>
@@ -187,9 +192,7 @@ export default async function EstoquePage() {
                 <div className="min-w-0">
                   <p className="truncate text-cream">
                     <span
-                      className={
-                        m.tipo === "saida" ? "text-pink" : "text-lilac"
-                      }
+                      className={m.tipo === "saida" ? "text-pink" : "text-lilac"}
                     >
                       {m.tipo === "saida" ? "Consumo" : "Reposição"}
                     </span>{" "}

@@ -39,31 +39,29 @@ export function formatQtd(qtd: number | string, unidade: string): string {
   return `${s} ${unidade}`;
 }
 
-/** Lista os insumos da empresa, em ordem alfabética. */
-export async function getInsumos(empresaId: string): Promise<Insumo[]> {
+/**
+ * Lista os insumos do estoque COMPARTILHADO (um só pra todos os admins),
+ * em ordem alfabética. O RLS garante que só admin enxerga.
+ */
+export async function getInsumos(): Promise<Insumo[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("insumos")
     .select(
       "id, nome, categoria, unidade, qtd_compra, custo_compra, estoque_atual, estoque_minimo"
     )
-    .eq("empresa_id", empresaId)
     .order("nome", { ascending: true });
   return (data ?? []) as Insumo[];
 }
 
-/** Últimas movimentações de estoque (com o nome do insumo). */
-export async function getMovimentacoes(
-  empresaId: string,
-  limit = 30
-): Promise<Movimentacao[]> {
+/** Últimas movimentações do estoque compartilhado (com o nome do insumo). */
+export async function getMovimentacoes(limit = 30): Promise<Movimentacao[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("movimentacoes_estoque")
     .select(
       "id, tipo, quantidade, custo_unitario, custo_total, observacao, created_at, insumos(nome, unidade)"
     )
-    .eq("empresa_id", empresaId)
     .order("created_at", { ascending: false })
     .limit(limit);
   return (data ?? []) as unknown as Movimentacao[];

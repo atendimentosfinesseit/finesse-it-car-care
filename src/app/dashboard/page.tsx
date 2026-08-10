@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LogOut, ExternalLink, Boxes } from "lucide-react";
+import { LogOut, ExternalLink } from "lucide-react";
 import { getOrCreateEmpresa } from "@/lib/empresa";
 import { getServicos } from "@/lib/servicos";
 import { signOut } from "@/lib/actions/auth";
@@ -45,21 +45,6 @@ export default async function Dashboard() {
           </form>
         </div>
       </header>
-
-      <nav className="mt-8 grid gap-3 sm:grid-cols-2">
-        <Link
-          href="/dashboard/estoque"
-          className="hover-lift flex items-center gap-3 rounded-2xl border-2 border-lilac/40 bg-purple-600/30 p-5"
-        >
-          <Boxes size={28} className="text-pink" />
-          <div>
-            <p className="font-display font-bold text-cream">Estoque</p>
-            <p className="text-sm text-lilac-soft">
-              Insumos, consumo e custo real
-            </p>
-          </div>
-        </Link>
-      </nav>
 
       <section className="mt-10">
         <div className="mb-5 flex items-baseline justify-between">

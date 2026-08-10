@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getOrCreateEmpresa } from "@/lib/empresa";
+import { requireAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 import { custoUnitario } from "@/lib/estoque";
 import { parseValor } from "@/lib/valor";
@@ -9,12 +9,15 @@ import { parseValor } from "@/lib/valor";
 export type EstoqueState = { error?: string; ok?: string };
 
 const UNIDADES = ["ml", "L", "g", "kg", "un"];
+const ROTA = "/admin/estoque";
 
-/** Cadastra um novo insumo no estoque. */
+/** Cadastra um novo insumo no estoque compartilhado. */
 export async function addInsumo(
   _prevState: EstoqueState,
   formData: FormData
 ): Promise<EstoqueState> {
+  await requireAdmin();
+
   const nome = String(formData.get("nome") ?? "").trim();
   const categoria = String(formData.get("categoria") ?? "").trim() || null;
   const unidade = String(formData.get("unidade") ?? "ml").trim();
@@ -30,12 +33,8 @@ export async function addInsumo(
   if (custoCompra === null)
     return { error: "Informe quanto pagou por essa quantidade (ex: 80,00)." };
 
-  const empresa = await getOrCreateEmpresa();
-  if (!empresa) return { error: "Sessão expirada. Entre novamente." };
-
   const supabase = await createClient();
   const { error } = await supabase.from("insumos").insert({
-    empresa_id: empresa.id,
     nome,
     categoria,
     unidade,
@@ -47,7 +46,7 @@ export async function addInsumo(
 
   if (error) return { error: "Não foi possível salvar. Tente novamente." };
 
-  revalidatePath("/dashboard/estoque");
+  revalidatePath(ROTA);
   const cu = custoUnitario({ qtd_compra: qtdCompra, custo_compra: custoCompra });
   return {
     ok: `${nome} cadastrado — custo de ${cu.toLocaleString("pt-BR", {
@@ -60,13 +59,15 @@ export async function addInsumo(
 }
 
 /**
- * Registra uma movimentação: consumo (saída) ou reposição (entrada).
- * Atualiza o estoque atual do insumo e guarda o custo do que foi gasto.
+ * Registra uma movimentação no estoque compartilhado: consumo (saída) ou
+ * reposição (entrada). Atualiza o estoque atual do insumo pra TODOS os admins.
  */
 export async function registrarMovimentacao(
   _prevState: EstoqueState,
   formData: FormData
 ): Promise<EstoqueState> {
+  await requireAdmin();
+
   const insumoId = String(formData.get("insumo_id") ?? "");
   const tipo = String(formData.get("tipo") ?? "");
   const quantidade = parseValor(String(formData.get("quantidade") ?? ""));
@@ -78,15 +79,11 @@ export async function registrarMovimentacao(
   if (quantidade === null || quantidade <= 0)
     return { error: "Informe uma quantidade válida." };
 
-  const empresa = await getOrCreateEmpresa();
-  if (!empresa) return { error: "Sessão expirada. Entre novamente." };
-
   const supabase = await createClient();
   const { data: insumo } = await supabase
     .from("insumos")
     .select("id, nome, unidade, qtd_compra, custo_compra, estoque_atual")
     .eq("id", insumoId)
-    .eq("empresa_id", empresa.id)
     .maybeSingle();
 
   if (!insumo) return { error: "Insumo não encontrado." };
@@ -94,7 +91,7 @@ export async function registrarMovimentacao(
   const estoqueAtual = Number(insumo.estoque_atual);
   if (tipo === "saida" && quantidade > estoqueAtual) {
     return {
-      error: `Estoque insuficiente: você tem ${estoqueAtual} ${insumo.unidade} de ${insumo.nome}.`,
+      error: `Estoque insuficiente: há ${estoqueAtual} ${insumo.unidade} de ${insumo.nome}.`,
     };
   }
 
@@ -104,7 +101,6 @@ export async function registrarMovimentacao(
     tipo === "saida" ? estoqueAtual - quantidade : estoqueAtual + quantidade;
 
   const { error: errMov } = await supabase.from("movimentacoes_estoque").insert({
-    empresa_id: empresa.id,
     insumo_id: insumoId,
     tipo,
     quantidade,
@@ -117,10 +113,9 @@ export async function registrarMovimentacao(
   await supabase
     .from("insumos")
     .update({ estoque_atual: novoEstoque })
-    .eq("id", insumoId)
-    .eq("empresa_id", empresa.id);
+    .eq("id", insumoId);
 
-  revalidatePath("/dashboard/estoque");
+  revalidatePath(ROTA);
 
   if (tipo === "saida") {
     return {
@@ -137,18 +132,13 @@ export async function registrarMovimentacao(
 
 /** Remove um insumo (e suas movimentações, por cascade). */
 export async function deleteInsumo(formData: FormData): Promise<void> {
+  await requireAdmin();
+
   const id = String(formData.get("id") ?? "");
   if (!id) return;
 
-  const empresa = await getOrCreateEmpresa();
-  if (!empresa) return;
-
   const supabase = await createClient();
-  await supabase
-    .from("insumos")
-    .delete()
-    .eq("id", id)
-    .eq("empresa_id", empresa.id);
+  await supabase.from("insumos").delete().eq("id", id);
 
-  revalidatePath("/dashboard/estoque");
+  revalidatePath(ROTA);
 }

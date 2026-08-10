@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, X } from "lucide-react";
+import { ArrowLeft, ShieldCheck, X, Boxes } from "lucide-react";
 import { requireAdmin, listAdmins } from "@/lib/admin";
 import { removeAdmin } from "@/lib/actions/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -33,6 +33,23 @@ export default async function AdminPage() {
           <ArrowLeft size={15} /> Voltar
         </Link>
       </header>
+
+      <nav className="mt-8">
+        <Link
+          href="/admin/estoque"
+          className="hover-lift flex items-center gap-3 rounded-2xl border-2 border-lilac/40 bg-purple-600/30 p-5"
+        >
+          <Boxes size={28} className="text-pink" />
+          <div>
+            <p className="font-display font-bold text-cream">
+              Estoque compartilhado
+            </p>
+            <p className="text-sm text-lilac-soft">
+              Insumos, consumo e custo real — um só pra todos os admins
+            </p>
+          </div>
+        </Link>
+      </nav>
 
       <section className="mt-8 rounded-3xl border-2 border-lilac/40 bg-purple-600/30 p-6">
         <h2 className="font-display mb-1 text-lg font-semibold text-cream">
