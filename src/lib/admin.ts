@@ -19,9 +19,9 @@ export async function isAdmin(): Promise<boolean> {
   return !!data;
 }
 
-/** Barra o acesso: quem não é admin vai pro painel comum. */
+/** Barra o acesso: quem não é admin vai pro catálogo. */
 export async function requireAdmin(): Promise<void> {
-  if (!(await isAdmin())) redirect("/dashboard");
+  if (!(await isAdmin())) redirect("/");
 }
 
 /** Lista todos os emails admin (via service_role — o RLS só mostra o próprio). */

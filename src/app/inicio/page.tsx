@@ -1,16 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { LayoutGrid, ShieldCheck } from "lucide-react";
-import { getOrCreateEmpresa } from "@/lib/empresa";
+import { LayoutGrid, ShieldCheck, LogOut } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/admin";
+import { signOut } from "@/lib/actions/auth";
 
 export default async function Inicio() {
-  const empresa = await getOrCreateEmpresa();
-  if (!empresa) redirect("/login");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
 
-  // Só admin vê a escolha; usuário comum vai direto pro catálogo.
-  if (!(await isAdmin())) redirect("/dashboard");
+  // Só admin vê a escolha; qualquer outra conta vai direto pro catálogo.
+  if (!(await isAdmin())) redirect("/");
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-5 py-12">
@@ -24,11 +28,11 @@ export default async function Inicio() {
       <h1 className="font-display mt-5 text-3xl font-bold text-cream">
         Onde você quer entrar?
       </h1>
-      <p className="mt-2 text-lilac-soft">{empresa.nome}</p>
+      <p className="mt-2 text-sm text-lilac-soft">{user.email}</p>
 
       <div className="stagger mt-10 grid w-full gap-5 sm:grid-cols-2">
         <Link
-          href="/dashboard"
+          href="/"
           className="hover-lift flex flex-col items-center gap-3 rounded-3xl border-2 border-lilac/50 bg-purple-600/40 p-8 text-center"
         >
           <LayoutGrid size={40} className="text-pink" />
@@ -36,7 +40,7 @@ export default async function Inicio() {
             Entrar no catálogo
           </span>
           <span className="text-sm text-lilac-soft">
-            Gerenciar serviços, estoque e agenda do seu negócio
+            Ver a vitrine de serviços da Finesse It
           </span>
         </Link>
 
@@ -49,10 +53,19 @@ export default async function Inicio() {
             Painel admin
           </span>
           <span className="text-sm text-lilac-soft">
-            Controlar quais contas têm acesso de administrador
+            Estoque e controle de administradores
           </span>
         </Link>
       </div>
+
+      <form action={signOut} className="mt-8">
+        <button
+          type="submit"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-lilac-soft transition-colors hover:text-pink"
+        >
+          <LogOut size={15} /> Sair
+        </button>
+      </form>
     </main>
   );
 }

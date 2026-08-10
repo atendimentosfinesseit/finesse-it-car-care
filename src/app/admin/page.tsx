@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, X, Boxes } from "lucide-react";
+import { ArrowLeft, ShieldCheck, X, Boxes, LogOut } from "lucide-react";
 import { requireAdmin, listAdmins } from "@/lib/admin";
 import { removeAdmin } from "@/lib/actions/admin";
+import { signOut } from "@/lib/actions/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AddAdminForm } from "./add-admin-form";
 
@@ -26,12 +27,22 @@ export default async function AdminPage() {
             </h1>
           </div>
         </div>
-        <Link
-          href="/inicio"
-          className="inline-flex items-center gap-1.5 rounded-full border border-lilac/50 px-4 py-2 text-sm font-medium text-cream hover:border-pink"
-        >
-          <ArrowLeft size={15} /> Voltar
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/inicio"
+            className="inline-flex items-center gap-1.5 rounded-full border border-lilac/50 px-4 py-2 text-sm font-medium text-cream hover:border-pink"
+          >
+            <ArrowLeft size={15} /> Voltar
+          </Link>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1.5 rounded-full border border-lilac/50 px-4 py-2 text-sm font-medium text-cream hover:border-pink"
+            >
+              <LogOut size={15} /> Sair
+            </button>
+          </form>
+        </div>
       </header>
 
       <nav className="mt-8">
