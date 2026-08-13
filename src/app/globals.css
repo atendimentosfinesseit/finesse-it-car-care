@@ -35,6 +35,8 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Compensa o header fixo ao rolar até âncoras de seção. */
+    scroll-padding-top: 84px;
   }
 
   body {
@@ -44,6 +46,8 @@
     background-attachment: fixed;
     color: var(--color-cream);
     font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   a,
@@ -60,6 +64,13 @@
       opacity 0.2s ease;
   }
 
+  /* Tudo que é clicável tem cursor de mão. */
+  button:not(:disabled),
+  a,
+  [role="button"] {
+    cursor: pointer;
+  }
+
   button:not(:disabled):active {
     transform: translateY(1px);
   }
@@ -67,8 +78,42 @@
   :focus-visible {
     outline: 2px solid var(--color-pink);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: 8px;
   }
+}
+
+/* ── Superfícies (Soft UI Evolution: profundidade sutil) ─────── */
+
+/* Header fixo translúcido. */
+.glass {
+  background: color-mix(in srgb, #2c1660 72%, transparent);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+
+/* Card padrão da marca: superfície translúcida + borda + sombra suave. */
+.card-fi {
+  background: color-mix(in srgb, #6d44cf 32%, transparent);
+  border: 1px solid color-mix(in srgb, #c6a6f2 32%, transparent);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 12px 30px -18px rgba(15, 6, 45, 0.8);
+}
+
+/* Brilho decorativo (blob) atrás do herói — sem imagem, puro CSS. */
+.glow {
+  background: radial-gradient(closest-side, rgba(233, 111, 168, 0.55), transparent);
+  filter: blur(6px);
+}
+
+/* Chip de navegação por categoria. */
+.chip {
+  background: color-mix(in srgb, #6d44cf 30%, transparent);
+  border: 1px solid color-mix(in srgb, #c6a6f2 30%, transparent);
+}
+.chip:hover {
+  border-color: var(--color-pink);
+  color: #fff;
 }
 
 /* ── Animações ────────────────────────────────────────────── */
