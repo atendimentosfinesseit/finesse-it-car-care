@@ -15,6 +15,8 @@ import {
   type Servico,
 } from "@/lib/catalogo";
 import { formatBRL } from "@/lib/valor";
+import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
+import { PORTFOLIO } from "@/lib/portfolio";
 
 const MSG_GERAL =
   "Olá! Vim pelo catálogo da Finesse It Car Care e gostaria de agendar um serviço.";
@@ -116,6 +118,35 @@ function Hero() {
           ))}
         </ul>
       </div>
+    </section>
+  );
+}
+
+/* ── Vitrine: carros que passaram pela Finesse It ──────────── */
+function Portfolio() {
+  if (PORTFOLIO.length === 0) return null;
+  return (
+    <section
+      id="trabalhos"
+      className="relative mx-auto mt-4 w-full max-w-6xl px-5"
+    >
+      <div className="mb-4 flex items-center justify-center gap-3">
+        <span className="h-px w-8 bg-lilac/40" aria-hidden />
+        <h2 className="font-display text-center text-2xl font-bold uppercase tracking-wide text-cream sm:text-3xl">
+          Trabalhos recentes
+        </h2>
+        <span className="h-px w-8 bg-lilac/40" aria-hidden />
+      </div>
+      <p className="mx-auto mb-2 max-w-lg text-center text-sm text-lilac-soft">
+        Alguns dos carros que passaram pelas nossas mãos.
+      </p>
+      <CoverflowCarousel
+        slides={PORTFOLIO}
+        label="Carros lavados na Finesse It"
+        showCaption
+        showNavigation
+        showPagination
+      />
     </section>
   );
 }
@@ -227,6 +258,7 @@ export default function Home() {
 
       <main className="flex-1 pb-24">
         <Hero />
+        <Portfolio />
 
         {CATEGORIAS.map((cat) => {
           const itens = SERVICOS.filter((s) => s.categoria === cat.chave);

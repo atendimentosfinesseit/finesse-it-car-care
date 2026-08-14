@@ -1,0 +1,13 @@
+Coloque aqui as fotos dos carros lavados (ex.: civic-branco.jpg).
+
+Depois abra  src/lib/portfolio.ts  e adicione uma linha apontando para o
+arquivo, por exemplo:
+
+  {
+    src: "/portfolio/civic-branco.jpg",
+    alt: "Honda Civic branco após lavagem e enceramento",
+    title: "Lavagem premium",
+    subtitle: "Enceramento",
+  },
+
+Dica: fotos quadradas (1:1) ficam melhores, pois os cards são quadrados.
