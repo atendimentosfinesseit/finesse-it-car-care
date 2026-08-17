@@ -17,6 +17,7 @@ import {
 import { formatBRL } from "@/lib/valor";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { PORTFOLIO } from "@/lib/portfolio";
+import { SiteHeader } from "@/app/_components/site-header";
 
 const MSG_GERAL =
   "Olá! Vim pelo catálogo da Finesse It Car Care e gostaria de agendar um serviço.";
@@ -25,40 +26,6 @@ function precoLabel(s: Servico): string {
   if (s.cortesia) return "Cortesia";
   if (s.preco === null) return "Sob consulta";
   return formatBRL(s.preco);
-}
-
-/* ── Header fixo ───────────────────────────────────────────── */
-function Header() {
-  return (
-    <header className="glass sticky top-0 z-40 border-b border-lilac/15">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-5 py-3">
-        <a href="#topo" className="flex items-center gap-2.5">
-          <Image
-            src="/mascote.jpg"
-            alt=""
-            width={38}
-            height={38}
-            className="rounded-full border border-lilac/60"
-          />
-          <span className="font-display text-lg font-bold leading-none text-cream">
-            Finesse It
-            <span className="block text-[11px] font-medium tracking-wide text-lilac-soft">
-              Car Care
-            </span>
-          </span>
-        </a>
-        <a
-          href={linkWhatsApp(MSG_GERAL)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full bg-pink px-4 py-2 text-sm font-semibold text-white shadow-lg hover:bg-pink-dark"
-        >
-          <MessageCircle size={16} />
-          <span className="hidden sm:inline">Agendar</span>
-        </a>
-      </div>
-    </header>
-  );
 }
 
 /* ── Hero ──────────────────────────────────────────────────── */
@@ -151,25 +118,6 @@ function Portfolio() {
   );
 }
 
-/* ── Navegação por categoria ───────────────────────────────── */
-function CategoryNav() {
-  return (
-    <nav className="glass sticky top-[62px] z-30 border-y border-lilac/15">
-      <div className="no-scrollbar mx-auto flex w-full max-w-6xl gap-2 overflow-x-auto px-5 py-3">
-        {CATEGORIAS.map((cat) => (
-          <a
-            key={cat.chave}
-            href={`#${cat.chave}`}
-            className="chip whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium text-lilac-soft"
-          >
-            {cat.titulo}
-          </a>
-        ))}
-      </div>
-    </nav>
-  );
-}
-
 /* ── Card de serviço ───────────────────────────────────────── */
 function CardServico({ s }: { s: Servico }) {
   const msg = `Olá! Vim pelo catálogo da Finesse It e quero agendar: ${s.nome}.`;
@@ -253,8 +201,7 @@ function CTABand() {
 export default function Home() {
   return (
     <div className="relative flex min-h-full flex-col">
-      <Header />
-      <CategoryNav />
+      <SiteHeader />
 
       <main className="flex-1 pb-24">
         <Hero />
